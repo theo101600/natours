@@ -5,11 +5,14 @@ const morgan = require('morgan');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
-//adding a simple middleware
-app.use(express.json());
-
 //1) MIDDLEWARES
-app.use(morgan('dev'));
+// Only running this morgan middleware(logging) when we are in development
+console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 
 //use((<request>, <response>, <next>) => {})
 app.use((req, res, next) => {
