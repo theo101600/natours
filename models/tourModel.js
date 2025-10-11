@@ -1,25 +1,61 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 //writing a schema type options
 const tourSchema = new mongoose.Schema({
   name: {
     type: String,
-    //specifying the error we want displayed when field is missing
-    required: [true, 'A tour must have a name'],
-    // we cant have tour documents with the same name
+    required: [true, "A tour must have a name"],
     unique: true,
+    trim: true,
   },
-  rating: {
+  duration: {
     type: Number,
-    //setting default value for rating
+    required: [true, "A tour must have a duration"],
+  },
+  maxGroupSize: {
+    type: Number,
+    required: [true, "A tour must have a group size"],
+  },
+  difficulty: {
+    type: String,
+    required: [true, "A tour must have a difficulty"],
+  },
+  ratingsAverage: {
+    type: Number,
     default: 4.5,
+  },
+  ratingsQuantity: {
+    type: Number,
+    default: 0,
   },
   price: {
     type: Number,
-    required: [true, 'A tour must have a price'],
+    required: [true, "A tour must have a price"],
   },
+  priceDiscount: Number,
+  summary: {
+    type: String,
+    trim: true,
+    required: [true, "A tour summary is required"],
+  },
+  description: {
+    type: String,
+    trim: true,
+  },
+  imageCover: {
+    type: String,
+    required: [true, "A tour must have a cover image"],
+  },
+  image: {
+    type: [String],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  startDates: [Date],
 });
 
 //making a model out of the schema
-const Tour = mongoose.model('Tour', tourSchema);
+const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
