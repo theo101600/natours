@@ -1,14 +1,51 @@
 const Tour = require("../models/tourModel");
 
-// removing the reading of data from the local file
-// const tours = JSON.parse(
-//   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
-// );
-
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    console.log(req.query);
+    //Building the query
+    // making a hard copy
+    // 1 Filtering
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
 
+    // 2 Advanced Filtering
+    // converting the query object to string
+    let queryStr = JSON.stringify(queryObj);
+    //{ duration: { $gte: 5 }, difficulty: 'easy'} <- filter object in mongoshell
+    //{ duration: { gte: '5' }, difficulty: 'easy' } <- console.log(req.query)
+
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    console.log(JSON.parse(queryStr));
+
+    let query = Tour.find(JSON.parse(queryStr));
+
+    // 3 Sorting
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      // adding multiple sort criteria: sort('price ratingsAverage')
+      query = query.sort(sortBy);
+    } else {
+      //adding a default sort criteria
+      query = query.sort("-createdAt");
+    }
+
+    // 4 Field Limiting
+    if (req.query.fields) {
+      // getting fields string, formatting them separated with space
+      const fields = req.query.fields.split(",").join(" ");
+      // query = query.select("name duration difficulty price");
+      query = query.select(fields);
+    } else {
+      // if no field is specified, remove the __v property (-)
+      query = query.select("-__v");
+    }
+
+    //Executing the query
+    const tours = await query;
+
+    //Sending the response
     res.status(200).json({
       status: "success",
       results: tours.length,
