@@ -57,6 +57,10 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   //Options object specifying that if we output this as JSON and object we want virtual propertie to be added
   {
@@ -84,6 +88,26 @@ tourSchema.pre("save", function (next) {
 //   console.log(doc);
 //   next();
 // });
+
+// Query Middleware: using /^find/ to make sure it works in find, findOne, etc...
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} ms`);
+  console.log(docs);
+  next();
+});
+
+// Aggregation Middleware:
+tourSchema.pre("aggregate", function (next) {
+  // adding a new stage in the beginning of the pipeline to exclude secret tours
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log(this.pipeline());
+  next();
+});
 
 //making a model out of the schema
 const Tour = mongoose.model("Tour", tourSchema);
