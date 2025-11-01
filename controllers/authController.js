@@ -12,9 +12,23 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+const days = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 90; // default 90 days if not set
+
+const cookieOptions = {
+  expires: new Date(Date.now() + days * 24 * 60 * 60 * 1000),
+  httpOnly: true,
+};
+
+if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+
 // function for the response
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  // sending a cookie with the response cookie(<name of the cookie>, <content of the cookie>, <options>)
+  res.cookie("jwt", token, cookieOptions);
+
+  //Remove the password from the response
+  user.password = undefined;
 
   res.status(statusCode).json({
     status: "success",
