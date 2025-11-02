@@ -12,6 +12,7 @@ const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
 
 console.log(process.env.NODE_ENV);
 
@@ -73,6 +74,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // Placing the code below the other route definition because that means the request did not hit the above routes
 // .all() means all the http method (get, post, put...)
