@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const validator = require("validator");
+// const User = require("./userModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -83,8 +84,32 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      //GeoJSON
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
-  //Options object specifying that if we output this as JSON and object we want virtual propertie to be added
+  //Options object specifying that if we output this as JSON and object we want virtual properties to be added
   {
     toJSON: {
       virtuals: true,
@@ -106,6 +131,12 @@ tourSchema.pre("save", function (next) {
   next();
 });
 
+// tourSchema.pre("save", async function (next) {
+//   const guidesPromises = this.guides.map((id) => User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
+
 // tourSchema.post("save", function (doc, next) {
 //   console.log(doc);
 //   next();
@@ -114,6 +145,14 @@ tourSchema.pre("save", function (next) {
 // Query Middleware: using /^find/ to make sure it works in find, findOne, etc...
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "guides",
+    select: "-__v -passwordChangedAt",
+  });
   next();
 });
 
