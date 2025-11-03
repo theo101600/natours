@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const factory = require("./handlerFactory");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -9,18 +10,6 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
-
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const user = await User.find();
-
-  res.status(200).json({
-    status: "success",
-    results: user.length,
-    data: {
-      user,
-    },
-  });
-});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //1 create error if user POSTs password data
@@ -57,27 +46,15 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is a work in progress",
-  });
-};
+exports.getUser = factory.getOne(User);
+
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: "error",
-    message: "This route is a work in progress",
+    message: "This route is not defined, Please user /signup",
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is a work in progress",
-  });
-};
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is a work in progress",
-  });
-};
+// do NOT update passwords with this!
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
+exports.getAllUsers = factory.getAll(User);
