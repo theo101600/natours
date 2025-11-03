@@ -7,6 +7,7 @@ const {
   deleteUser,
   updateMe,
   deleteMe,
+  getMe,
 } = require("../controllers/userController");
 //importing the signup and login controller
 const {
@@ -21,9 +22,8 @@ const {
 
 const router = express.Router();
 
-//setting up route for signup
+router.get("/me", protect, getMe, getUser);
 router.post("/signup", signup);
-//setting up route for login
 router.post("/login", login);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
