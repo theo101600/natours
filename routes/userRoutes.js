@@ -22,15 +22,21 @@ const {
 
 const router = express.Router();
 
-router.get("/me", protect, getMe, getUser);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
-router.patch("/updateMyPassword", protect, updatePassword);
-router.patch("/updateMe", protect, updateMe);
-router.delete("/deleteMe", protect, deleteMe);
 
+// All the routes after this line will be protected
+router.use(protect);
+
+router.get("/me", getMe, getUser);
+router.patch("/updateMyPassword", updatePassword);
+router.patch("/updateMe", updateMe);
+router.delete("/deleteMe", deleteMe);
+
+// Only let an administrator accesss these routes
+router.use(restrictTo("admin"));
 router.route("/").get(getAllUsers).post(createUser);
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 
