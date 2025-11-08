@@ -183,12 +183,12 @@ tourSchema.post(/^find/, function (docs, next) {
 });
 
 // Aggregation Middleware:
-tourSchema.pre("aggregate", function (next) {
-  // adding a new stage in the beginning of the pipeline to exclude secret tours
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  console.log(this.pipeline());
-  next();
-});
+// tourSchema.pre("aggregate", function (next) {
+//   // adding a new stage in the beginning of the pipeline to exclude secret tours
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   console.log(this.pipeline());
+//   next();
+// });
 
 //making a model out of the schema
 const Tour = mongoose.model("Tour", tourSchema);
