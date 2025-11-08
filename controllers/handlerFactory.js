@@ -41,7 +41,7 @@ exports.createOne = (Model) =>
     res.status(201).json({
       status: "success",
       data: {
-        tour: doc,
+        data: doc,
       },
     });
   });
@@ -78,6 +78,8 @@ exports.getAll = (Model) =>
       .limitFields()
       .paginate();
 
+    // added explain() here
+    // const doc = await features.query.explain();
     const doc = await features.query;
 
     //Sending the response

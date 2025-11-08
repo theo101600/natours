@@ -120,6 +120,17 @@ const tourSchema = new mongoose.Schema(
   },
 );
 
+// tourSchema.index({
+//   //1 means ascending, -1 means descending order
+//   price: 1,
+// });
+tourSchema.index({
+  //1 means ascending, -1 means descending order
+  price: 1,
+  ratingsAverage: -1,
+});
+tourSchema.index({ slug: 1 });
+
 //defining a virtual property
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
