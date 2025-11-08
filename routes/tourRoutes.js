@@ -9,16 +9,11 @@ const {
   aliasTopTours,
   getTourStats,
   getMonthlyPlan,
+  getToursWithin,
 } = require("../controllers/tourController");
 const reviewRouter = require("./reviewRoutes");
 
 const router = express.Router();
-
-// setting up param middleware, deleted this middleware in tourController.js
-// router.param("id", checkID);
-
-//localhost:3000/api/v1/tours?limit=5&sort=-ratingsAverage,price
-// implementing a middleware to modify the query parameters to follow the above URL
 
 router.use("/:tourId/reviews", reviewRouter);
 
@@ -29,6 +24,11 @@ router.route("/tour-stats").get(getTourStats);
 router
   .route("/monthly-plan/:year")
   .get(protect, restrictTo("admin", "lead-guide", "guide"), getMonthlyPlan);
+
+router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(getToursWithin);
+// tours-within/233/center/-40,90/unit/mi
 
 router
   .route("/")

@@ -37,6 +37,13 @@ const reviewSchema = mongoose.Schema(
   },
 );
 
+reviewSchema.index(
+  { tour: 1, user: 1 },
+  {
+    unique: true,
+  },
+);
+
 reviewSchema.pre(/^find/, function (next) {
   // this.populate([
   //   {
@@ -70,7 +77,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
     },
   ]);
   console.log(stats);
-  if (stats.lenght > 0) {
+  if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
       ratingsQuantity: stats[0].nRating,
       ratingsAverage: stats[0].avgRating,
