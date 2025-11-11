@@ -8,6 +8,7 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -27,7 +28,32 @@ app.set("views", path.join(__dirname, "views"));
 // Serving static files
 app.use(express.static(path.join(__dirname, "public")));
 
+// Set Security HTTP headers
 app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      baseUri: ["'self'"],
+      fontSrc: ["'self'", "https:", "data:"],
+      scriptSrc: [
+        "'self'",
+        "https://cdn.jsdelivr.net", // ✅ allow your axios CDN
+        "https://*.stripe.com",
+      ],
+      connectSrc: [
+        "'self'",
+        "http://127.0.0.1:3000", // ✅ allow API requests
+        "http://localhost:3000",
+      ],
+      frameSrc: ["'self'", "https://*.stripe.com"],
+      objectSrc: ["'none'"],
+      styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      upgradeInsecureRequests: [],
+    },
+  }),
+);
 
 // Development logging
 if (process.env.NODE_ENV === "development") {
@@ -69,11 +95,12 @@ app.use(
     limit: "10kb",
   }),
 );
+app.use(cookieParser());
 
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
+  console.log(req.cookies);
   next();
 });
 
