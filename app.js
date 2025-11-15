@@ -95,6 +95,7 @@ app.use(
     limit: "10kb",
   }),
 );
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 
 // Test middleware
