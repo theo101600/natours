@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   getAllUsers,
   getUser,
@@ -8,6 +9,8 @@ const {
   updateMe,
   deleteMe,
   getMe,
+  uploadUserPhoto,
+  resizeUserPhoto,
 } = require("../controllers/userController");
 //importing the signup and login controller
 const {
@@ -34,7 +37,7 @@ router.use(protect);
 
 router.get("/me", getMe, getUser);
 router.patch("/updateMyPassword", updatePassword);
-router.patch("/updateMe", updateMe);
+router.patch("/updateMe", uploadUserPhoto, resizeUserPhoto, updateMe);
 router.delete("/deleteMe", deleteMe);
 
 // Only let an administrator accesss these routes
