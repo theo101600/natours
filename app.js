@@ -15,6 +15,7 @@ const globalErrorHandler = require("./controllers/errorController");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
+const bookingRouter = require("./routes/bookingRoutes");
 const viewRouter = require("./routes/viewRoutes");
 const { restrictTo } = require("./controllers/authController");
 
@@ -35,21 +36,48 @@ app.use(
     directives: {
       defaultSrc: ["'self'"],
       baseUri: ["'self'"],
+
       fontSrc: ["'self'", "https:", "data:"],
+
       scriptSrc: [
         "'self'",
-        "https://cdn.jsdelivr.net", // ✅ allow your axios CDN
-        "https://*.stripe.com",
+        "blob:",
+        "https://cdn.jsdelivr.net",
+        "https://js.stripe.com",
+        "https://api.mapbox.com",
       ],
+
+      scriptSrcElem: [
+        "'self'",
+        "blob:",
+        "https://js.stripe.com",
+        "https://api.mapbox.com",
+      ],
+
       connectSrc: [
         "'self'",
-        "http://127.0.0.1:3000", // ✅ allow API requests
+        "http://127.0.0.1:3000",
         "http://localhost:3000",
+
+        // Stripe
+        "https://api.stripe.com",
+        "https://js.stripe.com",
+
+        // Mapbox
+        "https://api.mapbox.com",
+        "https://events.mapbox.com",
+
+        // Parcel HMR (development)
+        "ws://127.0.0.1:*",
       ],
-      frameSrc: ["'self'", "https://*.stripe.com"],
-      objectSrc: ["'none'"],
+
+      frameSrc: ["'self'", "https://js.stripe.com"],
+
+      imgSrc: ["'self'", "data:", "blob:", "https:", "https://*.stripe.com"],
+
       styleSrc: ["'self'", "https:", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+
+      objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
   }),
@@ -110,6 +138,7 @@ app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/bookings", bookingRouter);
 
 // Placing the code below the other route definition because that means the request did not hit the above routes
 // .all() means all the http method (get, post, put...)
