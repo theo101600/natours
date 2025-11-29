@@ -9,7 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 const cookieParser = require("cookie-parser");
-
+const compression = require("compression");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const tourRouter = require("./routes/tourRoutes");
@@ -19,7 +19,7 @@ const bookingRouter = require("./routes/bookingRoutes");
 const viewRouter = require("./routes/viewRoutes");
 const { restrictTo } = require("./controllers/authController");
 
-console.log(process.env.NODE_ENV);
+// console.log(process.env.NODE_ENV);
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -125,6 +125,8 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
+
+app.use(compression());
 
 // Test middleware
 app.use((req, res, next) => {

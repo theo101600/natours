@@ -23,7 +23,7 @@ class APIFeatures {
   sort() {
     // 3 Sorting
     if (this.queryString.sort) {
-      console.log(this.queryString.sort);
+      // console.log(this.queryString.sort);
       const sortBy = this.queryString.sort.split(",").join(" ");
       // adding multiple sort criteria: sort('price ratingsAverage')
       this.query = this.query.sort(sortBy);
